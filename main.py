@@ -24,7 +24,8 @@ class scraperPage:
         if self.soup is not None:
             # Example: Extract all the text from the page
             text = self.soup.get_text()
-            print(text)
+            print(re.findall(r'\b[A-Za-z][a-z]+\b', text)  # Example regex to find capitalized words
+)
         else:
             print("Page not loaded. Please call getPage() first.")
 
