@@ -3,6 +3,7 @@ import re
 import requests
 from bs4 import BeautifulSoup
 import time
+import argparse
 
 
 class scraperPage:
@@ -48,31 +49,31 @@ class Find:
         if self.soup is None:
             print("Soup object is not initialized.")
             return None
-        return re.findall(r'Municipality[0-9]+\.?[0-9]+',self.text)[1].replace("Municipality","")
+        return re.findall(r'[Mm]unicipality([0-9]+,?[0-9]+)',self.text)[1]
 
     def findArea(self):
         if self.soup is None:
             print("Soup object is not initialized.")
             return None
-        return re.findall(r'Municipality[0-9]+\.?[0-9]+',self.text)[0].replace("Municipality","")
+        return re.findall(r'[Mm]unicipality([0-9]+\.?[0-9]+)',self.text)[0]
 
     def findRegion(self):
         if self.soup is None:
             print("Soup object is not initialized.")
             return None
-        return re.findall(r'region[A-Z][a-z]+Regional',self.text)[0].replace("region","").replace("Regional","")
+        return re.findall(r'Administrative region([A-Z][a-z]+(?: [A-Z][a-z]+)?)',self.text)[0]
 
     def findCoordinates(self):
         if self.soup is None:
             print("Soup object is not initialized.")
             return None
-        return re.findall(r'Coordinates:\s[0-9]+°[0-9]+..*[0-9]+°[0-9]+..',self.text)[0].replace("Coordinates: ","")    
+        return re.findall(r'Coordinates:\s([0-9]+°[0-9]+..*[0-9]+°[0-9]+.*[NSWE])',self.text)[0]
 
     def findElevation(self):
         if self.soup is None:
             print("Soup object is not initialized.")
             return None
-        return re.findall(r'Elevation[0-9]+',self.text)[0].replace("Elevation","")
+        return re.findall(r'[Ee]levation([0-9]+)',self.text)[0]
     
     def findTimeZone(self):
         if self.soup is None:
@@ -86,10 +87,21 @@ class Find:
             return None
         tempArray=re.findall(r'−?[0-9]+.?[0-9]\(−?[0-9]+\.?[0-9]\)',self.text)
         return tempArray[12],tempArray[64],tempArray[38]
+    
+    def findCountry(self):
+        if self.soup is None:
+            print("Soup object is not initialized.")
+            return None
+        return re.findall(r'Country.?([A-Z][a-z]+)',self.text)[0]
 
 if __name__ == "__main__":
-    #url="https://en.wikipedia.org/wiki/Larissa"
-    url = "https://en.wikipedia.org/wiki/Trikala"  # Replace with the URL you want to scrape
+    parser=argparse.ArgumentParser(description="Scrape a Wikipedia page for specific information.")
+    parser.add_argument('--url', type=str, help='The URL of the Wikipedia page to get info')
+    args=parser.parse_args()
+    if  args.url is None:
+        url=input("URL : ")
+    else:
+        url=args.url
     scraper = scraperPage(url)
 
     """with open("data.txt", "r", encoding="utf-8") as file:
@@ -98,12 +110,15 @@ if __name__ == "__main__":
 
     page=scraper.getPage()
     finder=Find(page)
-    
-    print("NAME : "+finder.findName())
-    print("POPULATION : "+finder.findPopulation())
-    print("AREA : "+finder.findArea()+" km²")
-    print("REGION : " +finder.findRegion())
-    print("COORDINATES : " +finder.findCoordinates())
-    print("ELEVATION : "+finder.findElevation())
-    print("TIMEZONE : "+finder.findTimeZone()[0])
-    print("TEMPERATURE(YEAR HIGH/YEAR LOW/YEAR AVG) : "+finder.findTemp()[0]+"/"+finder.findTemp()[1]+"/"+finder.findTemp()[2])
+    try:
+        print("NAME : "+finder.findName())
+        print("COUNTRY : "+finder.findCountry())
+        print("POPULATION : "+finder.findPopulation())
+        print("AREA : "+finder.findArea()+" km²")
+        print("REGION : "+finder.findRegion())
+        print("COORDINATES : " +finder.findCoordinates())
+        print("ELEVATION : "+finder.findElevation()+" m")
+        print("TIMEZONE : "+finder.findTimeZone()[0])
+        print("TEMPERATURE(YEAR HIGH/YEAR LOW/YEAR AVG) : "+finder.findTemp()[0]+"/"+finder.findTemp()[1]+"/"+finder.findTemp()[2])
+    except IndexError:
+        print("Some information could not be found on the page.")
