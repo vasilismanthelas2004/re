@@ -43,13 +43,21 @@ class Find:
             print("Soup object is not initialized.")
             return None
         return re.search(r'[A-Z][a-z]+',self.text).group()
+    
+    def findPopulation(self):
+        if self.soup is None:
+            print("Soup object is not initialized.")
+            return None
+        return re.findall(r'[Pp]opu[a-z]+\s[a-z]+\s[0-9]+,?[0-9]*', self.text)[1].split(" ")[2]
 
 
 
 if __name__ == "__main__":
-    url = "https://en.wikipedia.org/wiki/Trikala"  # Replace with the URL you want to scrape
+    url="https://en.wikipedia.org/wiki/Larissa"
+    #url = "https://en.wikipedia.org/wiki/Trikala"  # Replace with the URL you want to scrape
     scraper = scraperPage(url)
     page=scraper.getPage()
     finder=Find(page)
     name=finder.findName()
     print(name)
+    print(finder.findPopulation())
