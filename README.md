@@ -44,34 +44,7 @@
 
 ---
 
-## 📦 Χρήση ως Module (Importing)
-
-Λόγω της αντικειμενοστρεφούς αρχιτεκτονικής του, μπορείτε εύκολα να ενσωματώσετε αυτό το scraper σε δικά σας Python projects, κάνοντας import τις κλάσεις `scraperPage` και `Find`.
-
-**Παράδειγμα χρήσης:**
-
-```python
-from main import scraperPage, Find
-
-# 1. Δώστε το URL και πάρτε το αντικείμενο soup
-url = "https://en.wikipedia.org/wiki/Thessaloniki"
-scraper = scraperPage(url)
-page_soup = scraper.getPage()
-
-# 2. Αν η σελίδα κατέβηκε επιτυχώς, περάστε την στην κλάση Find
-if page_soup:
-    finder = Find(page_soup)
-    
-    # 3. Καλέστε όποια μέθοδο χρειάζεστε!
-    city_name = finder.findName()
-    population = finder.findPopulation()
-    
-    print(f"Η πόλη {city_name} έχει {population} κατοίκους.")
-```
-
----
-
-## 🧩 Αρχιτεκτονική Κώδικα (Under the Hood)
+## 🧩 Αρχιτεκτονική Κώδικα
 
 Ο κώδικας είναι οργανωμένος σε δύο βασικές Κλάσεις:
 
