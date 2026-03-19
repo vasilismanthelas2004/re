@@ -56,6 +56,11 @@ class Find:
             return None
         return re.findall(r'[Aa]rea\sof\s[0-9]+.?[0-9]*',self.text)[0].split(" ")[2]
 
+    def findRegion(self):
+        if self.soup is None:
+            print("Soup object is not initialized.")
+            return None
+        return re.findall(r'the\s[A-Z][a-z]+\sRegion',self.text)[0].split(" ")[1]
 
 if __name__ == "__main__":
     url="https://en.wikipedia.org/wiki/Larissa"
@@ -67,3 +72,4 @@ if __name__ == "__main__":
     print(name)
     print(finder.findPopulation())
     print(finder.findArea())
+    print(finder.findRegion())
