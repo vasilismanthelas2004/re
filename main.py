@@ -48,34 +48,62 @@ class Find:
         if self.soup is None:
             print("Soup object is not initialized.")
             return None
-        return re.findall(r'[Pp]opu[a-z]+\s[a-z]+\s[0-9]+,?[0-9]*', self.text)[1].split(" ")[2]
+        return re.findall(r'Municipality[0-9]+\.?[0-9]+',self.text)[1].replace("Municipality","")
 
     def findArea(self):
         if self.soup is None:
             print("Soup object is not initialized.")
             return None
-        return re.findall(r'[Aa]rea\sof\s[0-9]+.?[0-9]*',self.text)[0].split(" ")[2]
+        return re.findall(r'Municipality[0-9]+\.?[0-9]+',self.text)[0].replace("Municipality","")
 
     def findRegion(self):
         if self.soup is None:
             print("Soup object is not initialized.")
             return None
-        return re.findall(r'the\s[A-Z][a-z]+\sRegion',self.text)[0].split(" ")[1]
+        return re.findall(r'region[A-Z][a-z]+Regional',self.text)[0].replace("region","").replace("Regional","")
 
     def findCoordinates(self):
         if self.soup is None:
             print("Soup object is not initialized.")
             return None
-        return re.findall(r'[0-9]+°[0-9]+..*[0-9]+°[0-9]+..',self.text)[0]
+        return re.findall(r'Coordinates:\s[0-9]+°[0-9]+..*[0-9]+°[0-9]+..',self.text)[0].replace("Coordinates: ","")    
+
+    def findElevation(self):
+        if self.soup is None:
+            print("Soup object is not initialized.")
+            return None
+        return re.findall(r'Elevation[0-9]+',self.text)[0].replace("Elevation","")
+    
+    def findTimeZone(self):
+        if self.soup is None:
+            print("Soup object is not initialized.")
+            return None
+        return re.findall(r'UTC\+[0-9+]',self.text)
+
+    def findTemp(self):
+        if self.soup is None:
+            print("Soup object is not initialized.")
+            return None
+        tempArray=re.findall(r'−?[0-9]+.?[0-9]\(−?[0-9]+\.?[0-9]\)',self.text)
+        return tempArray[12],tempArray[64],tempArray[38]
+
 if __name__ == "__main__":
-    url="https://en.wikipedia.org/wiki/Larissa"
-    #url = "https://en.wikipedia.org/wiki/Trikala"  # Replace with the URL you want to scrape
+    #url="https://en.wikipedia.org/wiki/Larissa"
+    url = "https://en.wikipedia.org/wiki/Trikala"  # Replace with the URL you want to scrape
     scraper = scraperPage(url)
+
+    """with open("data.txt", "r", encoding="utf-8") as file:
+        page = file.read()"""
+    
+
     page=scraper.getPage()
     finder=Find(page)
-    name=finder.findName()
-    print(name)
-    print(finder.findPopulation())
-    print(finder.findArea())
-    print(finder.findRegion())
-    print(finder.findCoordinates())
+    
+    print("NAME : "+finder.findName())
+    print("POPULATION : "+finder.findPopulation())
+    print("AREA : "+finder.findArea()+" km²")
+    print("REGION : " +finder.findRegion())
+    print("COORDINATES : " +finder.findCoordinates())
+    print("ELEVATION : "+finder.findElevation())
+    print("TIMEZONE : "+finder.findTimeZone()[0])
+    print("TEMPERATURE(YEAR HIGH/YEAR LOW/YEAR AVG) : "+finder.findTemp()[0]+"/"+finder.findTemp()[1]+"/"+finder.findTemp()[2])
