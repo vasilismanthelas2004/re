@@ -50,6 +50,11 @@ class Find:
             return None
         return re.findall(r'[Pp]opu[a-z]+\s[a-z]+\s[0-9]+,?[0-9]*', self.text)[1].split(" ")[2]
 
+    def findArea(self):
+        if self.soup is None:
+            print("Soup object is not initialized.")
+            return None
+        return re.findall(r'[Aa]rea\sof\s[0-9]+.?[0-9]*',self.text)[0].split(" ")[2]
 
 
 if __name__ == "__main__":
@@ -61,3 +66,4 @@ if __name__ == "__main__":
     name=finder.findName()
     print(name)
     print(finder.findPopulation())
+    print(finder.findArea())
