@@ -26,17 +26,54 @@
 
 ---
 
-## 🛠️ Εγκατάσταση (Installation)
+## 🛠️ Εγκατάσταση & Εκτέλεση (Installation & Usage)
 
-Για να τρέξετε το πρόγραμμα, βεβαιωθείτε ότι έχετε εγκατεστημένη την **Python 3** στο σύστημά σας.
+Για να τρέξετε το πρόγραμμα, βεβαιωθείτε ότι έχετε εγκατεστημένη την **Python 3**.
 
-**Βήμα 1:** Κατεβάστε το project τοπικά στον υπολογιστή σας.
+1. **Κατεβάστε** το project τοπικά στον υπολογιστή σας.
+2. **Ανοίξτε** ένα τερματικό (Command Prompt, PowerShell ή Terminal) μέσα στον φάκελο του project.
+3. **Εγκαταστήστε** τις απαραίτητες εξωτερικές βιβλιοθήκες εκτελώντας την παρακάτω εντολή:
+   ```bash
+   pip install -r requirements.txt
+   ```
+4. **Τρέξτε** το πρόγραμμα περνώντας το URL της πόλης που θέλετε με το flag `--url`:
+   ```bash
+   python main.py --url https://en.wikipedia.org/wiki/Larissa
+   ```
+   *(Εναλλακτικά, αν τρέξετε απλά `python main.py`, το πρόγραμμα θα σας ζητήσει να κάνετε επικόλληση το URL διαδραστικά).*
 
-**Βήμα 2:** Ανοίξτε ένα τερματικό (Command Prompt, PowerShell ή Terminal) μέσα στον φάκελο του project.
+---
 
-**Βήμα 3:** Εγκαταστήστε τις απαραίτητες εξωτερικές βιβλιοθήκες εκτελώντας την παρακάτω εντολή:
+## 📦 Χρήση ως Module (Importing)
 
-```bash
-pip install -r requirements.txt
+Λόγω της αντικειμενοστρεφούς αρχιτεκτονικής του, μπορείτε εύκολα να ενσωματώσετε αυτό το scraper σε δικά σας Python projects, κάνοντας import τις κλάσεις `scraperPage` και `Find`.
+
+**Παράδειγμα χρήσης:**
+
+```python
+from main import scraperPage, Find
+
+# 1. Δώστε το URL και πάρτε το αντικείμενο soup
+url = "https://en.wikipedia.org/wiki/Thessaloniki"
+scraper = scraperPage(url)
+page_soup = scraper.getPage()
+
+# 2. Αν η σελίδα κατέβηκε επιτυχώς, περάστε την στην κλάση Find
+if page_soup:
+    finder = Find(page_soup)
+    
+    # 3. Καλέστε όποια μέθοδο χρειάζεστε!
+    city_name = finder.findName()
+    population = finder.findPopulation()
+    
+    print(f"Η πόλη {city_name} έχει {population} κατοίκους.")
 ```
-τελος τραβα
+
+---
+
+## 🧩 Αρχιτεκτονική Κώδικα (Under the Hood)
+
+Ο κώδικας είναι οργανωμένος σε δύο βασικές Κλάσεις:
+
+* **`scraperPage`**: Χρησιμοποιεί το `requests` και το `BeautifulSoup` για να ανακτήσει την HTML σελίδα με custom headers (`User-Agent`).
+* **`Find`**: Περιέχει όλη τη λογική της ανάλυσης κειμένου. Δέχεται το καθαρό κείμενο της σελίδας και μέσω στοχευμένων συναρτήσεων `re.findall()` και `re.search()` απομονώνει τις ζητούμενες πληροφορίες. Διαθέτει μηχανισμούς `try...except` για την αποφυγή σφαλμάτων (IndexError) σε περίπτωση ελλιπών δεδομένων στη Wikipedia.
