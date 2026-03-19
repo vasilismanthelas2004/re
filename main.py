@@ -62,6 +62,11 @@ class Find:
             return None
         return re.findall(r'the\s[A-Z][a-z]+\sRegion',self.text)[0].split(" ")[1]
 
+    def findCoordinates(self):
+        if self.soup is None:
+            print("Soup object is not initialized.")
+            return None
+        return re.findall(r'[0-9]+°[0-9]+..*[0-9]+°[0-9]+..',self.text)[0]
 if __name__ == "__main__":
     url="https://en.wikipedia.org/wiki/Larissa"
     #url = "https://en.wikipedia.org/wiki/Trikala"  # Replace with the URL you want to scrape
@@ -73,3 +78,4 @@ if __name__ == "__main__":
     print(finder.findPopulation())
     print(finder.findArea())
     print(finder.findRegion())
+    print(finder.findCoordinates())
