@@ -19,7 +19,7 @@ class scraperPage:
         try:
             response = requests.get(self.url,headers=headers)
             response.raise_for_status()  # Check if the request was successful
-            self.soup = BeautifulSoup(response.text, 'html.parser')
+            self.soup = BeautifulSoup(response.text, 'html.parser').get_text()
             return self.soup
         except requests.exceptions.RequestException as e:
             print(f"An error occurred: {e}")
@@ -27,8 +27,9 @@ class scraperPage:
 
 class Find:
     def __init__(self, soup):
+        
         self.soup = soup
-        self.text = self.soup.get_text()
+        #self.text = self.soup.get_text()
 
     def extractTokens(self):
         if self.soup is None:
