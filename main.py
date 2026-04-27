@@ -28,7 +28,7 @@ class scraperPage:
 class Find:
     def __init__(self, soup):
         
-        self.soup = soup
+        self.text = soup
         #self.text = self.soup.get_text()
 
     def extractTokens(self):
