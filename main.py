@@ -28,7 +28,7 @@ class scraperPage:
 class Find:
     def __init__(self, soup):
         
-        self.text = soup
+        self.soup=self.text = soup
         #self.text = self.soup.get_text()
 
     def extractTokens(self):
@@ -44,13 +44,15 @@ class Find:
         if self.soup is None:
             print("Soup object is not initialized.")
             return None
-        return re.search(r'[A-Z][a-z]+',self.text).group()
+        return re.search(r'([A-Z][a-z]+(?: [A-Z][a-z]+)*)', self.text).group(1)
+        #return re.search(r'[A-Z][a-z]+',self.text).group()
     
     def findPopulation(self):
         if self.soup is None:
             print("Soup object is not initialized.")
             return None
-        return re.findall(r'[Mm]unicipality([0-9]+,?[0-9]+)',self.text)[1]
+        return re.search(r'Population.*?Municipality\s*(?:\[[0-9]+\])*\s*([0-9]{1,3}(?:,[0-9]{3})+)', self.text, re.S).group(1)
+        #return re.findall(r'[Mm]unicipality([0-9]+,?[0-9]+)',self.text)[1]
 
     def findArea(self):
         if self.soup is None:
@@ -62,7 +64,8 @@ class Find:
         if self.soup is None:
             print("Soup object is not initialized.")
             return None
-        return re.findall(r'Administrative region([A-Z][a-z]+(?: [A-Z][a-z]+)?)',self.text)[0]
+        return re.search(r'(?:Administrative region|Periphery|Region)\s*([A-Z][a-z]+(?: [A-Z][a-z]+)*)', self.text).group(1)
+        #return re.findall(r'Administrative region([A-Z][a-z]+(?: [A-Z][a-z]+)?)',self.text)[0]
 
     def findCoordinates(self):
         if self.soup is None:
@@ -93,7 +96,8 @@ class Find:
         if self.soup is None:
             print("Soup object is not initialized.")
             return None
-        return re.findall(r'Country.?([A-Z][a-z]+)',self.text)[0]
+        return re.findall(r'Country.?([A-Z][a-z]+(?: [A-Z][a-z]+)*)', self.text)[0]
+        #return re.findall(r'Country.?([A-Z][a-z]+)',self.text)[0]
 
 if __name__ == "__main__":
     parser=argparse.ArgumentParser(description="Scrape a Wikipedia page for specific information.")
